@@ -1,40 +1,65 @@
 # Skills compendium
 
-Portable agent skills. Each folder is an Agent Skill (`SKILL.md` plus optional helpers) and works in any IDE or harness that loads that format.
+Portable agent skills. Each folder under `skills/` is an Agent Skill (`SKILL.md` plus optional helpers) and works in any IDE or harness that loads that format.
 
 Skills discover repository conventions from Git metadata, manifests, CI config, and repo guidance — they do not assume a specific forge, package manager, default branch, or project domain.
 
-Copy a skill folder into your user skills directory, or into a project's skills directory to keep it repo-local.
+This repository is the source of truth. Install from GitHub so later edits can be pulled with an update command, rather than recopying folders.
 
 ## Skills
 
 | Skill | When to use |
 | --- | --- |
-| [rgaa-dev](rgaa-dev/) | RGAA 4.1.2 / WCAG 2.2 AA implementation guide (HTML + React/TypeScript, optional DSFR) and a separate Rails-only static-code audit for French public-sector web apps. Vendored from [Isalafont/claude-skill-rgaa-dev](https://github.com/Isalafont/claude-skill-rgaa-dev). |
+| [rgaa-dev](skills/rgaa-dev/) | RGAA 4.1.2 / WCAG 2.2 AA implementation guide (HTML + React/TypeScript, optional DSFR) for French public-sector web apps. |
+| [audit](skills/audit/) | RGAA 4.1.2 static-code audit (C/NC/NA report). |
+
+Based on [Isalafont/claude-skill-rgaa-dev](https://github.com/Isalafont/claude-skill-rgaa-dev) (Licence Ouverte 2.0). Last vendored update: September 2026.
 
 ## Install
 
-User-level (common Agent Skills home):
+Replace `borde-galadrim/skills-compendium` with this repository if you forked it. A private repo needs GitHub access.
+
+**npx skills** (any Agent Skills client):
 
 ```bash
-cp -R <skill-name> ~/.agents/skills/
+npx skills add borde-galadrim/skills-compendium
 ```
 
-Project-level:
+Later, after this repo changes:
 
 ```bash
-cp -R <skill-name> .agents/skills/
+npx skills update
+```
+
+Optional: `--skill rgaa-dev --skill audit`, or `-g` for a user-wide install.
+
+**GitHub CLI** (Cursor example, user-wide):
+
+```bash
+gh skill install borde-galadrim/skills-compendium --all --agent cursor --scope user
+```
+
+Later:
+
+```bash
+gh skill update
+```
+
+Use `--scope project` inside an application repo to install into `.agents/skills/` (committed with that project). Pin a release with `@tag` or `--pin` when a client must not float.
+
+**Copy fallback** (snapshot — will not track updates):
+
+```bash
+cp -R skills/rgaa-dev skills/audit ~/.agents/skills/
+```
+
+Project-level copy:
+
+```bash
+cp -R skills/rgaa-dev skills/audit .agents/skills/
 ```
 
 Use whichever skills directory your harness documents if it differs from those paths.
-
-**rgaa-dev** ships two skills under `rgaa-dev/skills/` (`rgaa-dev` and `audit`). Copy both folders:
-
-```bash
-cp -R rgaa-dev/skills/rgaa-dev rgaa-dev/skills/audit ~/.agents/skills/
-```
-
-Upstream repo, changelog, and licence: [github.com/Isalafont/claude-skill-rgaa-dev](https://github.com/Isalafont/claude-skill-rgaa-dev).
 
 ## Portability
 
