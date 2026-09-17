@@ -1,6 +1,6 @@
 ---
 name: release-note
-description: Lists user-facing changes as bullet points classified as new features, improvements, or small fixes. Compares git ranges (tag..tag, or HEAD vs develop/main/origin). Use when the user asks for release notes, what shipped since a tag, changelog between tags, or "/release-note".
+description: Lists user-facing changes as bullet points classified as new features, improvements, or small fixes. Compares git ranges (tag..tag, or HEAD vs default base). Use when the user asks for release notes, what shipped since a tag, changelog between tags, or "/release-note".
 disable-model-invocation: true
 ---
 
@@ -17,21 +17,29 @@ Default when the user does **not** name a range:
 | Unspecified | `HEAD` (current branch tip) vs default base branch |
 | User says `origin` / remote base | Use `origin/<base>` instead of local `<base>` |
 
-**Default base branch:** `develop` if it exists (local or `origin/develop`), else `main`, else `master`.
+### Default base branch
+
+Discover in order:
+
+1. `git symbolic-ref refs/remotes/origin/HEAD` → strip `refs/remotes/origin/`
+2. First ref that exists among `main`, `master`, `develop` (check `refs/heads/<name>` then `refs/remotes/origin/<name>`)
+3. Repo docs (`CONTRIBUTING.md`, `AGENTS.md`, CI default branch) if they name one
 
 ```bash
 git rev-parse --abbrev-ref HEAD
-git show-ref --verify --quiet refs/heads/develop || git show-ref --verify --quiet refs/remotes/origin/develop
+git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null
 git show-ref --verify --quiet refs/heads/main || git show-ref --verify --quiet refs/remotes/origin/main
+git show-ref --verify --quiet refs/heads/master || git show-ref --verify --quiet refs/remotes/origin/master
+git show-ref --verify --quiet refs/heads/develop || git show-ref --verify --quiet refs/remotes/origin/develop
 ```
 
-Prefer `<base>..<current>` where `<current>` is `HEAD` unless the user names another tip. For “on develop but not tagged yet”, use `<tag>..develop` (or `origin/develop`).
+Prefer `<base>..<current>` where `<current>` is `HEAD` unless the user names another tip.
 
 When the user **does** mention tags or refs, honor them:
 
 | User intent | Range |
 |-------------|--------|
-| “since last tag” | `<latest-semver-tag>..HEAD` (or `..develop` if they said develop) |
+| “since last tag” | `<latest-semver-tag>..HEAD` (or `..<base>` if they named a branch) |
 | “between v1.2 and v1.3” | `v1.2..v1.3` |
 | “since v1.36.2 on develop” | `v1.36.2..develop` |
 | “current vs origin/main” | `origin/main..HEAD` |
@@ -64,7 +72,12 @@ git log <from>..<to> --format='%s%n%b%n---' --no-merges
 git log <from>..<to> --oneline --merges | head -30
 ```
 
-Optional: `gh pr list --state merged --base <base> --limit 20 --json number,title,mergedAt`
+Optional — when a forge CLI is installed and the remote matches:
+
+- GitHub: `gh pr list --state merged --base <base> --limit 20 --json number,title,mergedAt`
+- GitLab: `glab mr list --merged --target-branch <base>`
+
+Forge commands are adapters, not requirements.
 
 ## Classify
 
@@ -112,7 +125,7 @@ Lead with what those audiences care about; mention backend/infra only when it ch
 ## Example
 
 ```markdown
-## `v1.2.0` → `develop`
+## `v1.2.0` → `main`
 
 ### New features
 - Category product listing with filters and sort
