@@ -1,10 +1,10 @@
 ---
-name: audit
+name: rgaa-audit
 description: |
   Audit RGAA 4.1.2 — analyse statique du code puis 3 questions runtime.
   Produit un rapport de conformité structuré (tableau C/NC/NA par thème,
   NC détaillées avec Élément/Problème/Correction/Priorité, correction groupée).
-  Invoquer avec le chemin du fichier : /accessibility:audit app/views/foo.html.erb
+  Invoquer avec le chemin du fichier : /accessibility:rgaa-audit app/views/foo.html.erb
   Fonctionne en mode page (app/views/) ou composant (app/components/).
   Suit le RGAA 4.1.2 : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/
 paths:
@@ -13,13 +13,13 @@ paths:
   - "app/components/**/*.rb"
 ---
 
-# /accessibility:audit — Audit RGAA 4.1.2
+# /accessibility:rgaa-audit — Audit RGAA 4.1.2
 
 ## Comment utiliser cette skill
 
 ```
-/accessibility:audit app/views/users/show.html.erb
-/accessibility:audit app/components/ban_form_component.html.erb
+/accessibility:rgaa-audit app/views/users/show.html.erb
+/accessibility:rgaa-audit app/components/ban_form_component.html.erb
 ```
 
 ---

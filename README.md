@@ -11,7 +11,7 @@ This repository is the source of truth. Install from GitHub so later edits can b
 | Skill | When to use |
 | --- | --- |
 | [rgaa-dev](skills/rgaa-dev/) | RGAA 4.1.2 / WCAG 2.2 AA implementation guide (HTML + React/TypeScript, optional DSFR) for French public-sector web apps. |
-| [audit](skills/audit/) | RGAA 4.1.2 static-code audit (C/NC/NA report). |
+| [rgaa-audit](skills/rgaa-audit/) | RGAA 4.1.2 static-code audit (C/NC/NA report). |
 
 Based on [Isalafont/claude-skill-rgaa-dev](https://github.com/Isalafont/claude-skill-rgaa-dev) (Licence Ouverte 2.0). Last vendored update: September 2026.
 
@@ -31,7 +31,7 @@ Later, after this repo changes:
 npx skills update
 ```
 
-Optional: `--skill rgaa-dev --skill audit`, or `-g` for a user-wide install.
+Optional: `--skill rgaa-dev --skill rgaa-audit`, or `-g` for a user-wide install.
 
 **GitHub CLI** (Cursor example, user-wide):
 
@@ -50,13 +50,13 @@ Use `--scope project` inside an application repo to install into `.agents/skills
 **Copy fallback** (snapshot — will not track updates):
 
 ```bash
-cp -R skills/rgaa-dev skills/audit ~/.agents/skills/
+cp -R skills/rgaa-dev skills/rgaa-audit ~/.agents/skills/
 ```
 
 Project-level copy:
 
 ```bash
-cp -R skills/rgaa-dev skills/audit .agents/skills/
+cp -R skills/rgaa-dev skills/rgaa-audit .agents/skills/
 ```
 
 Use whichever skills directory your harness documents if it differs from those paths.
