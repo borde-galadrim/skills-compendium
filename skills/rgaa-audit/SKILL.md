@@ -1,26 +1,32 @@
 ---
 name: rgaa-audit
 description: |
-  Audit RGAA 4.1.2 — analyse statique du code puis 3 questions runtime.
-  Produit un rapport de conformité structuré (tableau C/NC/NA par thème,
-  NC détaillées avec Élément/Problème/Correction/Priorité, correction groupée).
-  Invoquer avec le chemin du fichier : /accessibility:rgaa-audit app/views/foo.html.erb
+  Audit RGAA 4.1.2 — analyse statique du code puis passe runtime navigateur
+  (clavier, zoom 200%, focus visible). Produit un rapport C/NC/NA par thème,
+  avec NC détaillées et corrections groupées.
+  Invoquer avec le chemin du fichier : rgaa-audit app/views/foo.html.erb
+  (slash `/rgaa-audit` dans Claude Code et Cursor ; citer la skill par son nom dans Codex).
   Fonctionne en mode page (app/views/) ou composant (app/components/).
   Suit le RGAA 4.1.2 : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/
+# `paths:` est reconnu par Claude Code uniquement ; les autres harnais l'ignorent.
 paths:
   - "app/views/**/*.erb"
   - "app/components/**/*.erb"
   - "app/components/**/*.rb"
 ---
 
-# /accessibility:rgaa-audit — Audit RGAA 4.1.2
+# Audit RGAA 4.1.2 (rgaa-audit)
 
 ## Comment utiliser cette skill
 
 ```
-/accessibility:rgaa-audit app/views/users/show.html.erb
-/accessibility:rgaa-audit app/components/ban_form_component.html.erb
+rgaa-audit app/views/users/show.html.erb
+rgaa-audit app/components/ban_form_component.html.erb
 ```
+
+Dépendance : cette skill renvoie vers `../rgaa-dev/impacts.md`. Si `rgaa-dev`
+n'est pas installée à côté, la table d'impacts est absente : continuer, et
+raisonner par impact à partir des exemples de la skill.
 
 ---
 
@@ -58,8 +64,9 @@ Consulter les fichiers de référence pour les patterns de détection, non-confo
 `target: '_blank'` avec `title` seul → NC 13.2. L'indication doit être dans le contenu du lien (texte visible ou `fr-sr-only`).
 
 **Règle NC 8.5 — titre de page :**
-Si `set_title!` est présent dans le code → critère 8.5 C (ne pas poser la question).
-Si absent en mode page → poser la question en Phase 2.
+Si `set_title!` est présent dans le code → critère 8.5 C.
+Si absent en mode page → lire `document.title` pendant la passe runtime.
+Ne pas poser la question si l'agent peut accéder à la page.
 
 ### Règle de tri par impact _(à appliquer avant tout verdict)_
 
@@ -73,26 +80,48 @@ Table des impacts par type de handicap : [../rgaa-dev/impacts.md](../rgaa-dev/im
 
 ---
 
-## Phase 2 — Questions runtime (3 toujours + 1 conditionnelle)
+## Phase 2 — Passe runtime navigateur (agent, pas l'humain)
 
-Poser ces questions **en une seule fois**, après l'analyse :
+Après la Phase 1, **exécuter** les trois tests runtime. Ne pas les poser à
+l'humain tant qu'un navigateur ou un outil d'automatisation déjà disponible
+peut être utilisé.
 
-```
-Avant de finaliser le rapport, quelques vérifications que le code seul ne permet pas :
+Procédure détaillée :
+[references/runtime-browser.md](references/runtime-browser.md)
 
-🔴 Test clavier effectué ? (Tab, Shift+Tab, Enter, Escape sur les éléments interactifs)
-🔴 Zoom 200% testé ? (Cmd++ × 6 — aucun texte coupé, pas de scroll horizontal)
-🟠 Focus visible sur tous les éléments interactifs ?
-```
+### Choisir l'outil — détecter, ne pas supposer
 
-**Si `set_title!` absent en mode page**, ajouter :
-```
-🔴 Le titre de la page est-il pertinent et spécifique (pas juste le nom du site seul) ?
-   → Si oui, indiquer le titre affiché.
-   (Détecter le nom du site depuis `SITE_NAME` dans les helpers, ou `application.rb`, sinon utiliser « le nom du site »)
-```
+1. Utiliser la première capacité de pilotage navigateur disponible dans la
+   session : Claude in Chrome, navigateur intégré de Cursor, ou Playwright MCP
+   / navigateur Codex. Le tableau de correspondance est dans
+   [references/runtime-browser.md](references/runtime-browser.md).
+2. Sinon, utiliser Playwright ou Puppeteer s'il est déjà installé ou configuré
+   dans le projet.
+3. Ne pas installer Playwright, Puppeteer ou une nouvelle dépendance
+   automatiquement.
+4. Si aucun outil navigateur n'est disponible, demander à l'humain
+   d'effectuer les trois tests.
 
-Intégrer les réponses dans le rapport (cocher les cases, noter le titre si pertinent).
+### Résoudre l'URL
+
+- Page : route de l'application correspondant au fichier audité.
+- Composant : showcase, Storybook ou preview dédiée ; sinon page réelle qui
+  le monte.
+- Consulter `AGENTS.md` ou `references/runtime-urls.md` si le projet fournit
+  une cartographie d'URL spécifique ; ne jamais inventer une route.
+- Confirmer un origin vivant avant de commencer.
+- En mode page, lire `document.title`.
+- Si aucune URL ou aucun serveur vivant n'est disponible : le noter, proposer
+  le fallback Playwright/Puppeteer s'il existe, sinon demander les tests à
+  l'humain et continuer le rapport.
+
+**Critère de fin :** chaque test possède une preuve — liste des focus,
+mesure d'overflow, valeur de `document.title` ou capture — ou une raison
+d'échec outillée : navigateur indisponible, URL absente, authentification
+impossible ou session sans accès navigateur (lecture seule).
+
+Les résultats C/NC ne peuvent être cochés qu'avec une preuve. Sans preuve,
+le résultat est `non exécuté`.
 
 ---
 
@@ -106,11 +135,35 @@ Audit terminé. Comment veux-tu le résultat ?
 3. Les deux — rapport sauvegardé + corrections immédiates
 ```
 
+Si l'agent dispose d'un outil de question structurée (QCM), l'utiliser pour
+poser ce choix. Sinon, poser la question en texte simple, avec les trois
+options numérotées.
+
 Si l'option 1 ou 3 est choisie :
 - Créer le dossier `audits/` à la racine du projet s'il n'existe pas
 - Écrire le rapport dans `audits/rgaa-YYYY-MM-DD.md`
 - Si un fichier du même nom existe déjà, ajouter un suffixe incrémental : `rgaa-2026-04-22-2.md`
 - Afficher le chemin et une synthèse en moins de 10 lignes dans la conversation
+
+---
+
+## Contraintes obligatoires du rapport
+
+Ces règles s'appliquent à tout le rapport.
+
+### MUST
+
+1. Toujours citer le critère RGAA relié à chaque NC ou recommandation.
+2. Toujours proposer au moins un test de vérification par correction.
+3. Toujours expliquer l'impact utilisateur (pas seulement l'impact technique).
+4. Toujours privilégier une solution sémantique avant une surcouche ARIA.
+
+### MUST NOT
+
+1. Ne pas utiliser de `tabindex` positif (`tabindex="1+"`) sauf cas exceptionnel justifié.
+2. Ne pas supprimer l'indicateur de focus sans alternative visible.
+3. Ne pas s'appuyer uniquement sur la couleur pour transmettre une information.
+4. Ne pas annoncer « conforme RGAA » sans preuves de tests.
 
 ---
 
@@ -187,11 +240,29 @@ Quand plusieurs NC portent sur le même bout de code, proposer une correction un
 - **X.Y–X.Z** — justification courte (ex : aucune image, pas de formulaire…)
 - **X.Y** — critère de layout géré globalement
 
-### À vérifier manuellement
+### Vérifications runtime
 
-- [x/☐] Test clavier (Tab / Shift+Tab / Enter / Escape / flèches) — résultat
-- [x/☐] Zoom 200% (Cmd++ × 6 — aucun texte coupé, pas de scroll horizontal) — résultat
-- [x/☐] Focus visible sur tous les éléments interactifs — résultat
+| Test | Résultat | Source | Preuve |
+|------|----------|--------|--------|
+| Clavier | C / NC / non exécuté | Claude in Chrome / Cursor browser / Codex browser/Playwright MCP / Playwright / Puppeteer / humain | N arrêts Tab, défauts observés |
+| Zoom 200% | C / NC / non exécuté | Claude in Chrome / Cursor browser / Codex browser/Playwright MCP / Playwright / Puppeteer / humain | `scrollWidth`, mesures d'overflow, captures |
+| Focus visible | C / NC / non exécuté | Claude in Chrome / Cursor browser / Codex browser/Playwright MCP / Playwright / Puppeteer / humain | N contrôles inspectés, captures, défauts |
+
+En mode page, consigner également la valeur de `document.title` pour le
+critère 8.5.
+
+Limites : pas de lecteur d'écran ; `style.zoom` est une approximation du
+zoom navigateur si aucun facteur CDP ou zoom Chrome réel n'a été utilisé.
+
+Relier les résultats aux verdicts RGAA :
+
+- défaut clavier → NC 7.1 ;
+- contenu tronqué ou overflow à 200 % → NC 10.4 ;
+- absence d'indicateur de focus → NC 10.7 ;
+- largeur 320 px non adaptée → NC 10.11.
+
+Ces défauts ne doivent pas rester uniquement dans une section « à vérifier
+manuellement ».
 
 ### Limites du mode composant _(si applicable)_
 
