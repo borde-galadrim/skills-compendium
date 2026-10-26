@@ -32,7 +32,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ### 8.5 / 8.6 — Titre de page unique et descriptif 🔴 Bloquant
 
-**Détecter :** `set_title!` absent en mode page (→ question runtime) ; `<title>` générique identique sur toutes les pages
+**Détecter :** `set_title!` absent en mode page (→ lire `document.title` pendant la passe runtime) ; `<title>` générique identique sur toutes les pages
 
 **Correction :**
 ```erb
@@ -188,10 +188,16 @@ font-size: 16px;
 font-size: 1rem;                     /* rem respecte les préférences navigateur */
 ```
 
-**À vérifier manuellement :**
-- [ ] Cmd++ × 6 dans Chrome/Firefox : aucun texte coupé, pas de scroll horizontal
-- [ ] **Menu de navigation au zoom** : déplier le menu principal à 200% — items non tronqués ni superposés, sous-menus dans la fenêtre, bascule éventuelle en menu mobile fonctionnelle au clavier
-- [ ] Simuler 320px de large (DevTools) : contenu lisible sans scroll horizontal
+**Vérification runtime :**
+Suivre [la procédure navigateur](runtime-browser.md). Pour 10.4, utiliser
+un zoom réel à 200 %, mesurer le débordement horizontal du document et des
+conteneurs de texte, puis capturer la surface auditée. Vérifier également
+le menu principal à 200 % s'il existe : items non tronqués ni superposés,
+sous-menus dans la fenêtre et bascule éventuelle en menu mobile utilisable
+au clavier.
+
+La simulation d'une largeur de 320 px sans zoom relève de 10.11 et doit être
+rapportée séparément.
 
 Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#critere-10-4
 

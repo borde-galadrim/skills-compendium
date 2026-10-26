@@ -34,7 +34,7 @@ paths:
 
 ---
 
-> **Navigation** : utiliser des Read ciblés (offset/limit). Ne pas faire de grep exploratoire — les tableaux de ce fichier font foi sur les sections à consulter.
+> **Navigation** : lire uniquement les sections nécessaires, en s'appuyant sur les tableaux de ce fichier, qui font foi sur les sections à consulter. Éviter les recherches exploratoires dans l'ensemble des fichiers.
 
 ## Détection du contexte projet
 
