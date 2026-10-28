@@ -11,7 +11,7 @@ This repository is the source of truth. Install from GitHub so later edits can b
 | Skill | When to use |
 | --- | --- |
 | [rgaa-dev](skills/rgaa-dev/) | RGAA 4.1.2 / WCAG 2.2 AA implementation guide (HTML + React/TypeScript, optional DSFR) for French public-sector web apps. |
-| [rgaa-audit](skills/rgaa-audit/) | RGAA 4.1.2 static-code audit (C/NC/NA report). |
+| [rgaa-audit](skills/rgaa-audit/) | RGAA 4.1.2 audit of all 106 criteria: static code analysis plus browser checks; each criterion gets C / NC / NA / NT. Report in Markdown (optional JSON or HTML artifact). |
 
 Based on [Isalafont/claude-skill-rgaa-dev](https://github.com/Isalafont/claude-skill-rgaa-dev) (Licence Ouverte 2.0). Last vendored update: September 2026.
 

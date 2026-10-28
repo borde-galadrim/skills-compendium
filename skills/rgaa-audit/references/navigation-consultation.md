@@ -71,7 +71,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 12.2 — Page courante identifiée 🟠 Majeur
+### Page courante identifiée (aria-current — critère 12.2 non dédié, à vérifier) 🟠 Majeur
 
 **Détecter :** menu de navigation sans `aria-current="page"` sur l'item actif
 
@@ -179,7 +179,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 13.7 / 13.8 — Animations et contenus en mouvement 🟠 Majeur
+### 13.8 — Animations et contenus en mouvement (13.7 : flashs) 🟠 Majeur
 
 **Détecter :** carrousel ou animation sans bouton pause/stop ; absence de `prefers-reduced-motion` dans le CSS
 

@@ -2,7 +2,7 @@
 
 ---
 
-## Thème 8 — Éléments obligatoires (9 critères)
+## Thème 8 — Éléments obligatoires (10 critères)
 
 > Mode page uniquement. En mode composant, ces critères sont listés dans « Limites du mode composant ».
 
@@ -50,7 +50,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-## Thème 9 — Structuration de l'information (5 critères)
+## Thème 9 — Structuration de l'information (4 critères)
 
 ### 9.1 — Hiérarchie et présence des titres 🔴 Bloquant
 
@@ -203,7 +203,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 10.1 — Information portée par CSS seul 🟡 Mineur
+### 10.2 — Contenu présent sans feuilles de style 🟡 Mineur
 
 **Détecter :** `content:` CSS portant une information (astérisque obligatoire, symbole de statut) sans équivalent HTML
 

@@ -19,7 +19,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 4.11 — Contrôles accessibles + pas de lecture automatique 🔴 Bloquant
+### 4.10 / 4.11 — Lecture automatique et contrôles accessibles 🔴 Bloquant
 
 **Détecter :** `<video autoplay>` sans `muted` ni `controls` ; lecteur custom sans contrôles focusables
 
@@ -39,9 +39,9 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-## Thème 5 — Tableaux (7 critères)
+## Thème 5 — Tableaux (8 critères)
 
-### 5.4 — Caption et en-têtes 🟠 Majeur
+### 5.4 / 5.6 / 5.7 — Titre et en-têtes de tableau 🟠 Majeur
 
 **Détecter :** `<table>` sans `<caption>` ni `aria-label` ; `<th>` sans attribut `scope`
 
@@ -79,7 +79,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 5.3 — Tableau de mise en page 🟡 Mineur
+### 5.8 — Tableau de mise en forme 🟡 Mineur
 
 **Détecter :** `<table>` sans données structurées (utilisé pour la mise en page) sans `role="presentation"`
 
@@ -164,7 +164,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ## Thème 7 — Scripts (5 critères)
 
-### 7.1 — Éléments interactifs natifs 🔴 Bloquant
+### 7.3 — Éléments interactifs natifs (clavier et pointeur) 🔴 Bloquant
 
 **Détecter :** `<div data-action="click->...">`, `<span data-action="click->...">` — éléments non-interactifs avec gestionnaire de clic
 
@@ -220,7 +220,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 7.3 — Focus et annonces après Turbo 🟠 Majeur
+### 7.5 — Messages de statut après Turbo 🟠 Majeur
 
 **Détecter :** `turbo_stream`, navigation Turbo Drive, action ajax sans gestion du focus ni live region
 

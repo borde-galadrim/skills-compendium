@@ -2,7 +2,7 @@
 
 ---
 
-### 11.1 / 11.2 — Labels et groupes 🔴 Bloquant
+### 11.1 / 11.2 / 11.5 / 11.6 — Labels et regroupements de champs 🔴 Bloquant
 
 **Détecter :** `<input>`, `<select>`, `<textarea>` sans `<label for>` visible ni `aria-label` ; placeholder seul sans label ; groupe radio/checkbox sans `<fieldset><legend>`
 
@@ -40,7 +40,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 11.3 / 11.4 — Gestion des erreurs 🔴 Bloquant
+### 11.10 / 11.11 — Contrôle de saisie et gestion des erreurs 🔴 Bloquant
 
 **Détecter :** message d'erreur visible mais sans `aria-describedby` sur le champ ; champ en erreur sans `aria-invalid="true"` ; erreur sans suggestion de correction
 
@@ -75,7 +75,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 11.10 — Champs obligatoires 🔴 Bloquant
+### 11.10 — Champs obligatoires (contrôle de saisie) 🔴 Bloquant
 
 **Détecter :** champ obligatoire sans `required` (ou `aria-required="true"`) ; obligation signalée uniquement par la couleur ou un `*` sans explication
 

@@ -32,7 +32,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 1.1 — SVG et icônes DSFR 🔴 Bloquant
+### 1.2 — SVG et icônes DSFR 🔴 Bloquant
 
 **Détecter :** `<svg>` sans `aria-hidden="true"` sur élément décoratif ; `fr-icon-*` dans un bouton ou lien sans texte ni `aria-label` ; `<svg>` informatif sans `role="img"` + alternative
 
@@ -65,7 +65,7 @@ Lien RGAA : https://accessibilite.numerique.gouv.fr/methode/criteres-et-tests/#c
 
 ---
 
-### 1.6 / 1.7 — Images texte 🟠 Majeur
+### 1.8 — Images texte 🟠 Majeur
 
 **Détecter :** `<img>` contenant du texte visible (capture d'écran, bouton en image, logo textuel) sans équivalent HTML
 

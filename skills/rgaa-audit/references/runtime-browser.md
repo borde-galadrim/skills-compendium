@@ -37,7 +37,7 @@ en fin de document indique, pour chaque harnais, l'outil qui les fournit.
 | Redimensionner ou zoomer | Passe 320 px et zoom 200 % |
 | Lire la console | Erreurs JS pouvant bloquer le clavier ou le focus |
 
-## Clavier — critères 7.1 et 10.7
+## Clavier — critères 7.3, 12.8, 12.9 et 10.7
 
 Pour chaque contrôle interactif trouvé dans la surface auditée, notamment :
 
@@ -164,7 +164,135 @@ En mode page, lire `document.title` dans la page auditée et consigner sa
 valeur dans le rapport. Ne pas poser cette question à l'humain si l'agent
 peut lire le document.
 
-## Mouvement réduit
+## Contraste — critères 3.2 et 3.3
+
+Pour chaque élément portant du texte visible, lire la couleur du texte et la
+couleur de fond effective, puis calculer le ratio WCAG (luminance relative).
+Le fond effectif est celui de l'ancêtre le plus proche qui n'a pas de fond
+transparent.
+
+```js
+(() => {
+  const lum = (rgb) => {
+    const c = rgb.map((v) => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+  };
+  const parse = (str) => str.match(/\d+(\.\d+)?/g).slice(0, 3).map(Number);
+  const bgOf = (el) => {
+    for (let e = el; e; e = e.parentElement) {
+      const bg = getComputedStyle(e).backgroundColor;
+      if (!/rgba\(0, 0, 0, 0\)|transparent/.test(bg)) return bg;
+    }
+    return 'rgb(255, 255, 255)';
+  };
+  const out = [];
+  document.querySelectorAll('body *').forEach((el) => {
+    const txt = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+    if (!txt) return;
+    const cs = getComputedStyle(el);
+    const a = lum(parse(cs.color)) + 0.05;
+    const b = lum(parse(bgOf(el))) + 0.05;
+    const ratio = Math.max(a, b) / Math.min(a, b);
+    const large = parseFloat(cs.fontSize) >= 24 || (parseFloat(cs.fontSize) >= 18.66 && parseInt(cs.fontWeight) >= 700);
+    if (ratio < (large ? 3 : 4.5)) out.push({ tag: el.tagName.toLowerCase(), text: el.innerText.trim().slice(0, 40), ratio: +ratio.toFixed(2) });
+  });
+  return out;
+})();
+```
+
+Déclarer une non-conformité pour chaque élément sous le seuil (4,5:1 pour
+le texte normal, 3:1 pour le grand texte). Les images de texte et les
+éléments purement décoratifs sont exclus (voir `images-cadres-couleurs.md`).
+Pour le critère 3.3, relever aussi les composants et éléments graphiques
+porteurs d'information (bordure de champ, icône d'état) avec la même
+méthode et un seuil de 3:1.
+
+## Espacement du texte — critère 10.12
+
+Injecter les propriétés d'espacement WCAG (interligne 1,5 ; espacement des
+lettres 0,12 em ; espacement des mots 0,16 em ; espacement des paragraphes
+2 em), puis vérifier qu'aucun contenu n'est tronqué ni masqué :
+
+```js
+(() => {
+  const style = document.createElement('style');
+  style.id = 'rgaa-spacing-test';
+  style.textContent = '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }';
+  document.head.appendChild(style);
+  const clipped = [...document.querySelectorAll('body *')].filter(
+    (el) => getComputedStyle(el).overflow === 'hidden' && el.scrollHeight > el.clientHeight
+  ).length;
+  style.remove();
+  return { clipped };
+})();
+```
+
+Retirer le style après la mesure. Déclarer une non-conformité si du texte
+est tronqué ou masqué. Capturer le résultat.
+
+## Contenus au survol ou au focus — critères 10.13, 10.14 et 12.11
+
+1. Repérer les contenus qui apparaissent au survol ou au focus (infobulles,
+   menus déroulants, `:hover` ou `:focus-within` en CSS).
+2. Pour chacun, vérifier qu'il apparaît aussi à la prise de focus au clavier.
+3. Vérifier qu'il peut être fermé avec Échap sans déplacer le focus, et qu'il
+   reste visible tant que le pointeur ou le focus est sur le déclencheur ou sur
+   le contenu (10.13).
+4. Vérifier que le contenu apparaissant par CSS seul (`:hover`, `:focus`) est
+   atteignable au clavier (10.14 et 12.11).
+
+Déclarer une non-conformité si le contenu n'est pas atteignable au clavier,
+ne peut pas être fermé, ou disparaît dès que le pointeur se déplace sur lui.
+
+## Reflow 320 px — critère 10.11
+
+Redimensionner la surface à 320 px de large (capacité « Zoom / viewport »),
+puis mesurer l'overflow horizontal du document comme pour le critère 10.4 :
+
+```js
+document.documentElement.scrollWidth > document.documentElement.clientWidth
+```
+
+Sans capacité de redimensionnement, noter « non exécuté » pour 10.11 ; ne pas
+le déduire du test 10.4.
+
+## Orientation — critère 13.9
+
+Passer en paysage (par exemple 844 × 390) si la capacité le permet, et
+vérifier que le contenu reste consultable : pas de contenu masqué ni de
+blocage de l'orientation. Sans capacité de redimensionnement, noter
+« non exécuté ».
+
+## Médias et son automatique — critères 4.10, 4.11 et 4.12
+
+Lire les médias présents dans la page, puis :
+
+```js
+[...document.querySelectorAll('audio, video')].map((m) => ({
+  tag: m.tagName.toLowerCase(),
+  autoplay: m.autoplay,
+  muted: m.muted,
+  controls: m.controls,
+}));
+```
+
+Déclarer une non-conformité si un son démarre sans action de l'utilisateur
+(`autoplay` sans `muted`) et que ses contrôles ne sont pas accessibles au
+clavier (4.10). Pour 4.11 et 4.12, vérifier que les contrôles de lecture
+(`controls` natifs ou composants) sont atteignables par Tab et activables par
+Entrée ou Espace.
+
+## Raccourcis clavier à une touche — critère 12.10
+
+Vérifier si la page enregistre des raccourcis à une seule touche (écouteurs
+`keydown` sur le document, attributs `accesskey`). S'il n'y en a pas, noter
+« C » avec la preuve « aucun raccourci à une touche détecté ». S'il y en a,
+vérifier qu'ils peuvent être désactivés ou remappés, sinon déclarer une NC.
+
+## Mouvement réduit — critère 13.8
 
 Pour les composants animés (carrousels, transitions), si la capacité le
 permet, émuler `prefers-reduced-motion: reduce` et vérifier que l'animation
