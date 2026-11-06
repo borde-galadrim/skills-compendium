@@ -9,6 +9,8 @@ description: |
   axe-core, React Testing Library, Vitest, Jest, Playwright, zoom 200%,
   target size, RGAA, WCAG, ARIA, a11y, handicap, accessibility.
   Fonctionne avec ou sans DSFR (détection automatique dans le projet).
+  Invoquer aussi pour installer les règles RGAA permanentes dans un projet
+  (CLAUDE.md / AGENTS.md) : « setup », « installer dans le projet ».
 paths:
   - "src/**/*.js"
   - "src/**/*.jsx"
@@ -69,6 +71,21 @@ Comportement React (état, focus, live regions, tests) → `examples-react.md` e
 | *(si DSFR)* Règles spécifiques composants DSFR | [examples-dsfr.md](examples-dsfr.md) §Règles DSFR |
 | Composant tiers, PDF, vidéo, charge disproportionnée | [fallbacks.md](fallbacks.md) |
 | Ressources, outils, déclaration | [resources.md](resources.md) |
+| Installer les règles permanentes dans le projet | §Installation dans un projet ci-dessous |
+
+---
+
+## Installation dans un projet
+
+Un skill n'est chargé que si la tâche y fait penser ; les règles de [project-rules.md](project-rules.md), placées dans `AGENTS.md`, s'appliquent à chaque session.
+
+À la demande de l'utilisateur (« setup », « installer dans le projet ») :
+
+1. Si Node est disponible, exécuter depuis la racine du projet `node <dossier de ce skill>/scripts/install-project-rules.mjs`. Le script est idempotent : il remplace le bloc entre les marqueurs `<!-- rgaa-dev:start` et `<!-- rgaa-dev:end -->`, et ajoute `@AGENTS.md` à `CLAUDE.md` si besoin.
+2. Sinon, reproduire le même résultat à la main : copier le contenu de [project-rules.md](project-rules.md) dans `AGENTS.md` entre ces deux marqueurs (remplacer le bloc s'il existe déjà), puis ajouter la ligne `@AGENTS.md` à `CLAUDE.md` s'il existe et ne mentionne pas `AGENTS.md`.
+3. Montrer le diff à l'utilisateur ; ne pas committer sans sa demande.
+
+Vérification en CI : `node .agents/skills/rgaa-dev/scripts/install-project-rules.mjs --check` (code de sortie 1 si le bloc est absent ou périmé).
 
 ---
 
@@ -220,3 +237,5 @@ Non-conformité = exclusion réelle :
 | `html-structure.md` | Titres, landmarks, pièges JSX/HTML, DevTools |
 | `resources.md` | Liens RGAA/WCAG 2.2/ARIA, outils, déclaration |
 | `impacts.md` | Impact des défauts par type de handicap |
+| `project-rules.md` | Bloc de règles permanentes à placer dans `AGENTS.md` du projet |
+| `scripts/install-project-rules.mjs` | Installe ou met à jour ce bloc (idempotent, `--check` pour la CI) |
